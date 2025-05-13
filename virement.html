@@ -272,6 +272,13 @@
             background-color: #004080;
         }
 
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -331,14 +338,15 @@
                             <label for="debitAccount" class="form-label">Compte à débiter</label>
                             <select id="debitAccount" class="form-select" required>
                                 <option value="">Sélectionnez un compte</option>
-                                <option value="123456789">Compte Courant ••• 7890 (Solde: 5 243,67 €)</option>
-                                <option value="987654321">Compte Épargne ••• 4321 (Solde: 12 850,20 €)</option>
-                                <option value="456123789">Compte Joint ••• 6789 (Solde: 3 421,15 €)</option>
+                                <option value="account1" data-balance="918080.00">Compte Courant ••• 7890</option>
+                                <option value="account2" data-balance="0.00">Compte Épargne ••• 4321</option>
+                                <option value="account3" data-balance="0.00">Compte Joint ••• 6789</option>
                             </select>
                         </div>
                     </div>
                     <div class="account-info">
-                        Solde disponible : <span id="accountBalance">5 243,67 €</span>
+                        Solde disponible : <span id="accountBalance">918.080,00 €</span>
+                        <div class="error-message" id="balanceError">Solde insuffisant pour effectuer ce virement</div>
                     </div>
                 </div>
 
@@ -498,8 +506,8 @@
                     <span class="detail-value" id="confirmedReason">Aide</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Référence:</span>
-                    <span class="detail-value">VR202505121626</span>
+                    <span class="detail-label">Nouveau solde:</span>
+                    <span class="detail-value" id="confirmedNewBalance">916.080,00 €</span>
                 </div>
             </div>
             
@@ -533,15 +541,45 @@
             document.getElementById('recurringOptions').style.display = this.checked ? 'block' : 'none';
         });
 
-        // Mise à jour du solde lorsque le compte est sélectionné
+        // État du compte
+        let currentAccount = {
+            id: 'account1',
+            balance: 918080.00,
+            currency: 'EUR'
+        };
+
+        // Formatage du solde
+        function formatBalance(amount) {
+            return amount.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        // Mise à jour de l'affichage du solde
+        function updateBalanceDisplay() {
+            document.getElementById('accountBalance').textContent = formatBalance(currentAccount.balance) + ' €';
+        }
+
+        // Vérification du solde lors de la saisie
+        document.getElementById('amount').addEventListener('input', function() {
+            const amount = parseFloat(this.value) || 0;
+            const balanceError = document.getElementById('balanceError');
+            
+            if (amount > currentAccount.balance) {
+                balanceError.style.display = 'block';
+            } else {
+                balanceError.style.display = 'none';
+            }
+        });
+
+        // Mise à jour du compte sélectionné
         document.getElementById('debitAccount').addEventListener('change', function() {
-            const balances = {
-                '123456789': '5 243,67 €',
-                '987654321': '12 850,20 €',
-                '456123789': '3 421,15 €'
-            };
-            if (this.value) {
-                document.getElementById('accountBalance').textContent = balances[this.value];
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                currentAccount = {
+                    id: selectedOption.value,
+                    balance: parseFloat(selectedOption.dataset.balance),
+                    currency: 'EUR'
+                };
+                updateBalanceDisplay();
             }
         });
 
@@ -552,24 +590,28 @@
         
         transferForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            processTransfer();
-        });
-
-        document.getElementById('simulateBtn').addEventListener('click', function() {
-            alert('Simulation effectuée. Aucun virement ne sera réalisé.');
-        });
-
-        function processTransfer() {
-            // Récupération des valeurs du formulaire
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            // Vérification finale du solde
+            if (amount > currentAccount.balance) {
+                document.getElementById('balanceError').style.display = 'block';
+                return;
+            }
+            
+            // Mise à jour du solde
+            currentAccount.balance -= amount;
+            updateBalanceDisplay();
+            
+            // Récupération des autres valeurs
             const debitAccount = document.getElementById('debitAccount');
             const debitAccountText = debitAccount.options[debitAccount.selectedIndex].text.split('(')[0].trim();
             const beneficiary = document.getElementById('beneficiary').value;
             const iban = document.getElementById('iban').value;
             const bic = document.getElementById('bic').value;
-            const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
             const reason = document.getElementById('reason').value || 'Aucun motif spécifié';
             
-            // Formatage de la date actuelle
+            // Formatage de la date
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -578,32 +620,45 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const formattedDate = `${day}/${month}/${year} à ${hours}h${minutes}`;
             
-            // Mise à jour de la page de confirmation
-            document.getElementById('confirmedAmount').textContent = `${amount.replace('.', ',')} €`;
+            // Mise à jour de la confirmation
+            document.getElementById('confirmedAmount').textContent = formatBalance(amount) + ' €';
             document.getElementById('confirmedDebitAccount').textContent = debitAccountText;
             document.getElementById('confirmedBeneficiary').textContent = beneficiary;
             document.getElementById('confirmedIban').textContent = iban;
             document.getElementById('confirmedBic').textContent = bic || 'Non spécifié';
             document.getElementById('confirmedDate').textContent = formattedDate;
             document.getElementById('confirmedReason').textContent = reason;
+            document.getElementById('confirmedNewBalance').textContent = formatBalance(currentAccount.balance) + ' €';
             
             // Affichage de la confirmation
             transferSection.style.display = 'none';
             confirmationSection.style.display = 'block';
             
-            // Défilement vers le haut
-            window.scrollTo(0, 0);
-        }
+            // Réinitialisation du formulaire
+            transferForm.reset();
+            document.getElementById('scheduledDateContainer').style.display = 'none';
+            document.getElementById('recurringOptions').style.display = 'none';
+        });
         
         // Bouton retour
         document.getElementById('backButton').addEventListener('click', function() {
             transferSection.style.display = 'block';
             confirmationSection.style.display = 'none';
-            transferForm.reset();
-            // Réinitialiser les champs conditionnels
-            document.getElementById('scheduledDateContainer').style.display = 'none';
-            document.getElementById('recurringOptions').style.display = 'none';
         });
+
+        // Simulation de virement
+        document.getElementById('simulateBtn').addEventListener('click', function() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            if (amount > currentAccount.balance) {
+                document.getElementById('balanceError').style.display = 'block';
+                alert('Opération impossible : solde insuffisant');
+            } else {
+                alert(`Simulation réussie : ${formatBalance(amount)} € seraient débités de votre compte.\nNouveau solde: ${formatBalance(currentAccount.balance - amount)} €`);
+            }
+        });
+
+        // Initialisation
+        updateBalanceDisplay();
     </script>
 </body>
 </html>
