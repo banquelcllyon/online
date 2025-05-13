@@ -1,155 +1,609 @@
 ﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LCL</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virement bancaire - LCL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #002d5c;
+            --primary-light: #f6c800;
+            --white: #ffffff;
+            --gray-light: #f5f7fa;
+            --gray-dark: #333333;
+            --text-light: #555555;
+            --text-dark: #222222;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --section-gap: 2rem;
+        }
+
+        [data-theme="dark"] {
+            --primary-dark: #f6c800;
+            --primary-light: #002d5c;
+            --white: #1a1a1a;
+            --gray-light: #333333;
+            --gray-dark: #f5f7fa;
+            --text-light: #cccccc;
+            --text-dark: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--section-gap);
+        }
+
+        .logo {
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        .logo span {
+            color: var(--primary-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .form-section {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: var(--section-gap);
+        }
+
+        .section-title {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.8rem;
+            color: var(--primary-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-control {
+            flex: 1 1 200px;
+            min-width: 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--gray-light);
+            color: var(--text-dark);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(246, 200, 0, 0.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input {
+            accent-color: var(--primary-light);
+        }
+
+        .account-info {
+            background-color: rgba(0, 45, 92, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .account-info span {
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-light);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background-color: #ffd700;
+            transform: translateY(-2px);
+        }
+
+        .confirmation-page {
+            text-align: center;
+            display: none;
+        }
+
+        .confirmation-icon {
+            font-size: 5rem;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+            animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .confirmation-title {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 1.5rem 0;
+        }
+
+        .confirmation-details {
+            background-color: var(--gray-light);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 2rem auto;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            color: var(--text-light);
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .back-btn {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            background-color: #004080;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 1.5rem;
+            }
+            
+            .form-group {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .form-control {
+                flex: 1 1 auto;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .confirmation-icon {
+                font-size: 3.5rem;
+            }
+            
+            .confirmation-title {
+                font-size: 1.5rem;
+            }
+            
+            .confirmation-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-blue-100 transition-all duration-500 ease-in-out">
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">LCL<span>Banque</span></div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
 
-  <!-- Header -->
-  <header class="bg-blue-700 text-white p-4 flex justify-between items-center">
-    <div class="flex items-center">
-      <img src="images.jpg" alt="LCL" width="50" height="50" class="mr-2 transition-transform duration-300 hover:scale-110"/>
-      <span class="text-xl font-bold">LCL</span>
+        <div id="transferSection">
+            <form id="transferForm">
+                <!-- Section 1 : Informations sur l'émetteur -->
+                <div class="form-section">
+                    <h2 class="section-title"><i class="fas fa-user-circle"></i> Informations sur l'émetteur</h2>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="debitAccount" class="form-label">Compte à débiter</label>
+                            <select id="debitAccount" class="form-select" required>
+                                <option value="">Sélectionnez un compte</option>
+                                <option value="123456789">Compte Courant ••• 7890 (Solde: 5 243,67 €)</option>
+                                <option value="987654321">Compte Épargne ••• 4321 (Solde: 12 850,20 €)</option>
+                                <option value="456123789">Compte Joint ••• 6789 (Solde: 3 421,15 €)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="account-info">
+                        Solde disponible : <span id="accountBalance">5 243,67 €</span>
+                    </div>
+                </div>
+
+                <!-- Section 2 : Informations sur le bénéficiaire -->
+                <div class="form-section">
+                    <h2 class="section-title"><i class="fas fa-user-tag"></i> Informations sur le bénéficiaire</h2>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="beneficiary" class="form-label">Nom du bénéficiaire</label>
+                            <input type="text" id="beneficiary" class="form-input" placeholder="Entrez le nom complet" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="iban" class="form-label">IBAN</label>
+                            <input type="text" id="iban" class="form-input" placeholder="FR76 3000 1000 0100 0000 0000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="bic" class="form-label">Code BIC/SWIFT</label>
+                            <input type="text" id="bic" class="form-input" placeholder="CRLYFRPP">
+                        </div>
+                        <div class="form-control">
+                            <label for="bankName" class="form-label">Banque du bénéficiaire</label>
+                            <input type="text" id="bankName" class="form-input" placeholder="(Auto-rempli si reconnu)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="country" class="form-label">Pays</label>
+                            <select id="country" class="form-select" required>
+                                <option value="FR" selected>France</option>
+                                <option value="BE">Belgique</option>
+                                <option value="DE">Allemagne</option>
+                                <option value="ES">Espagne</option>
+                                <option value="OTHER">Autre pays</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3 : Montant et devise -->
+                <div class="form-section">
+                    <h2 class="section-title"><i class="fas fa-money-bill-wave"></i> Montant et devise</h2>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="amount" class="form-label">Montant à transférer</label>
+                            <input type="number" id="amount" class="form-input" placeholder="0,00" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="currency" class="form-label">Devise</label>
+                            <select id="currency" class="form-select" required>
+                                <option value="EUR" selected>EUR (Euro)</option>
+                                <option value="USD">USD (Dollar US)</option>
+                                <option value="GBP">GBP (Livre Sterling)</option>
+                                <option value="CHF">CHF (Franc Suisse)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4 : Détails du virement -->
+                <div class="form-section">
+                    <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Détails du virement</h2>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label class="form-label">Date d'exécution</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="immediate" name="executionDate" value="immediate" checked>
+                                    <label for="immediate">Immédiate</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="scheduled" name="executionDate" value="scheduled">
+                                    <label for="scheduled">Programmée</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control" id="scheduledDateContainer" style="display: none;">
+                            <label for="scheduledDate" class="form-label">Date programmée</label>
+                            <input type="date" id="scheduledDate" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label for="reason" class="form-label">Motif/Référence</label>
+                            <input type="text" id="reason" class="form-input" placeholder="(Facultatif)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label class="form-label">Type de virement</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="oneTime" name="transferType" value="oneTime" checked>
+                                    <label for="oneTime">Ponctuel</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="recurring" name="transferType" value="recurring">
+                                    <label for="recurring">Permanent</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control" id="recurringOptions" style="display: none;">
+                            <label for="frequency" class="form-label">Fréquence</label>
+                            <select id="frequency" class="form-select">
+                                <option value="weekly">Hebdomadaire</option>
+                                <option value="monthly" selected>Mensuelle</option>
+                                <option value="quarterly">Trimestrielle</option>
+                                <option value="yearly">Annuelle</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5 : Validation et sécurité -->
+                <div class="form-section">
+                    <h2 class="section-title"><i class="fas fa-shield-alt"></i> Validation et sécurité</h2>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="simulateBtn">Simuler le virement</button>
+                        <button type="submit" class="btn btn-primary">Valider le virement</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Page de confirmation -->
+        <div id="confirmationSection" class="confirmation-page">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 class="confirmation-title">Virement effectué avec succès</h1>
+            <div class="confirmation-amount" id="confirmedAmount">2 000,00 €</div>
+            
+            <div class="confirmation-details">
+                <div class="detail-item">
+                    <span class="detail-label">Compte débité:</span>
+                    <span class="detail-value" id="confirmedDebitAccount">Compte Courant ••• 7890</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Bénéficiaire:</span>
+                    <span class="detail-value" id="confirmedBeneficiary">Jean Dupont</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">IBAN:</span>
+                    <span class="detail-value" id="confirmedIban">FR76 3000 1000 0100 0000 0000</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">BIC/SWIFT:</span>
+                    <span class="detail-value" id="confirmedBic">CRLYFRPP</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date:</span>
+                    <span class="detail-value" id="confirmedDate">12/05/25 à 16h26</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Motif:</span>
+                    <span class="detail-value" id="confirmedReason">Aide</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Référence:</span>
+                    <span class="detail-value">VR202505121626</span>
+                </div>
+            </div>
+            
+            <button class="back-btn" id="backButton">Retour à l'accueil</button>
+        </div>
     </div>
-    <nav class="flex space-x-4">
-      <a href="#" class="hover:underline transition duration-300 hover:text-yellow-300">LCL </a>
-      <a href="#" class="hover:underline transition duration-300 hover:text-yellow-300">Contactez-nous</a>
-      <a href="#" class="hover:underline transition duration-300 hover:text-yellow-300">Localisateur</a>
-      <a href="#" class="hover:underline transition duration-300 hover:text-yellow-300">Déconnexion</a>
-    </nav>
-  </header>
 
-  <!-- Menu secondaire -->
-  <div class="bg-blue-500 text-white p-2 flex justify-center space-x-4">
-    <a href="compte.html" class="hover:underline transition duration-300 hover:text-yellow-200">MES COMPTES</a>
-    <a href="#" class="hover:underline transition duration-300 hover:text-yellow-200">PAIEMENTS DE FACTURES</a>
-    <a href="virement.html" class="hover:underline transition duration-300 hover:text-yellow-200">VIREMENTS</a>
-    <a href="#" class="hover:underline transition duration-300 hover:text-yellow-200">DEMANDES</a>
-    <a href="#" class="hover:underline transition duration-300 hover:text-yellow-200">MESSAGES</a>
-    <a href="#" class="hover:underline transition duration-300 hover:text-yellow-200">MON PROFIL</a>
-  </div>
+    <script>
+        // Gestion du dark/light mode
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        let isDark = false;
 
-  <!-- Contenu principal -->
-  <div class="flex flex-col md:flex-row p-4">
-    <!-- Sidebar -->
-    <aside class="bg-white p-4 shadow-md w-full md:w-1/4 animate-fade-in">
-      <div class="mb-4 flex items-center space-x-2 bg-bleue-100 p-3 rounded-md shadow-sm">
-        <i class="fas fa-user-circle text-blue-600 text-3xl"></i>
-        <div>
-          <p class="font-bold text-lg">Bienvenue, <span class="text-bleue-700">ERIC HALLOY</span></p>
-          <p id="last-session" class="text-sm text-gray-600"></p>
-        </div>
-      </div>
-      <div class="border-t border-blue-500 mt-4 pt-4">
-        <h2 class="font-bold mb-2 text-blue-700">VIREMENTS</h2>
-        <div class="flex flex-col space-y-2">
-          <button class="bg-bleue-200 hover:bg-bleue-300 text-blue-800 font-semibold py-2 px-4 rounded transition">Virements</button>
-          <button class="bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-4 rounded transition">Virements programmés</button>
-          <button class="bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-4 rounded transition">Lier mon compte externe</button>
-          <button class="bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-4 rounded transition">Envoi de virement</button>
-          <button class="bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-4 rounded transition">Mes destinataires</button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Formulaire de virement -->
-    <main class="bg-white p-6 shadow-md w-full md:w-3/4 mt-4 md:mt-0 md:ml-4 animate-fade-in">
-      <h1 class="bg-blue-600 text-black p-2 font-bold">CRÉER LE PROFIL D'EXPÉDITEUR</h1>
-      <form id="BMCI" action="http://localhost:3000/virement" method="POST" class="space-y-4 mt-4">
-        <div>
-          <label for="nom" class="block font-bold">Nom complet</label>
-          <input type="text" id="nom" name="nom" class="w-full border border-gray-300 p-2" required/>
-        </div>
-        <div>
-          <label for="courriel" class="block font-bold">Adresse courriel</label>
-          <input type="email" id="courriel" name="courriel" class="w-full border border-gray-300 p-2" required/>
-        </div>
-        <div>
-          <label for="montant" class="block font-bold">Montant du virement</label>
-          <input type="number" id="montant" name="montant" class="w-full border border-gray-300 p-2" required/>
-        </div>
-        <div>
-          <label for="destinataire" class="block font-bold">Destinataire</label>
-          <input type="text" id="destinataire" name="destinataire" class="w-full border border-gray-300 p-2" required/>
-        </div>
-        <div>
-          <label for="mobileDestinataire" class="block font-bold">Numéro du destinataire</label>
-          <input type="text" id="mobileDestinataire" name="mobileDestinataire" class="w-full border border-gray-300 p-2" required/>
-        </div>
-        <div>
-          <label for="message" class="block font-bold">Message (optionnel)</label>
-          <textarea id="message" name="message" class="w-full border border-gray-300 p-2"></textarea>
-        </div>
-        <button type="submit" class="bg-blue-700 hover:bg-blue-900 transition transform hover:scale-105 duration-300 text-white px-4 py-2 rounded-lg shadow-md">
-          <i class="fas fa-paper-plane mr-2"></i> Confirmer le virement
-        </button>
-      </form>
-      <p class="text-gray-500 mt-4">MD Marque déposée BMCI Inc. Utilisée sous licence.</p>
-    </main>
-  </div>
-
-  <!-- JS PDF + Date + Envoi SMS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
-    const now = new Date();
-    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-    const formatted = now.toLocaleDateString('fr-FR', options);
-    document.getElementById("last-session").textContent = `Dernière session : ${formatted}`;
-
-    document.getElementById('BMCI').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const nom = document.getElementById('nom').value;
-      const courriel = document.getElementById('courriel').value;
-      const montant = document.getElementById('montant').value;
-      const destinataire = document.getElementById('destinataire').value;
-      const mobileDestinataire = document.getElementById('mobileDestinataire').value;
-      const message = document.getElementById('message').value;
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('BMCI - Confirmation de Transaction', 20, 20);
-      doc.setFontSize(12);
-      doc.text(`Nom : ${nom}`, 20, 40);
-      doc.text(`Email : ${courriel}`, 20, 50);
-      doc.text(`Montant : ${montant} €`, 20, 60);
-      doc.text(`Destinataire : ${destinataire}`, 20, 70);
-      doc.text(`Mobile destinataire : ${mobileDestinataire}`, 20, 80);
-      doc.text(`Message : ${message}`, 20, 90);
-      doc.save('confirmation_transaction.pdf');
-
-      try {
-        await fetch('http://localhost:3000/send-sms', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            to: mobileDestinataire,
-            text: `Bonjour ${destinataire}, vous avez reçu un virement de ${montant} € de la part de ${nom}.`
-          })
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            if (isDark) {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                body.removeAttribute('data-theme');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
         });
-      } catch (error) {
-        console.error('Erreur lors de l’envoi du SMS :', error);
-      }
 
-      setTimeout(() => this.submit(), 500);
-    });
-  </script>
+        // Gestion des options conditionnelles
+        document.getElementById('scheduled').addEventListener('change', function() {
+            document.getElementById('scheduledDateContainer').style.display = this.checked ? 'block' : 'none';
+        });
 
+        document.getElementById('recurring').addEventListener('change', function() {
+            document.getElementById('recurringOptions').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Mise à jour du solde lorsque le compte est sélectionné
+        document.getElementById('debitAccount').addEventListener('change', function() {
+            const balances = {
+                '123456789': '5 243,67 €',
+                '987654321': '12 850,20 €',
+                '456123789': '3 421,15 €'
+            };
+            if (this.value) {
+                document.getElementById('accountBalance').textContent = balances[this.value];
+            }
+        });
+
+        // Gestion du formulaire
+        const transferForm = document.getElementById('transferForm');
+        const transferSection = document.getElementById('transferSection');
+        const confirmationSection = document.getElementById('confirmationSection');
+        
+        transferForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            processTransfer();
+        });
+
+        document.getElementById('simulateBtn').addEventListener('click', function() {
+            alert('Simulation effectuée. Aucun virement ne sera réalisé.');
+        });
+
+        function processTransfer() {
+            // Récupération des valeurs du formulaire
+            const debitAccount = document.getElementById('debitAccount');
+            const debitAccountText = debitAccount.options[debitAccount.selectedIndex].text.split('(')[0].trim();
+            const beneficiary = document.getElementById('beneficiary').value;
+            const iban = document.getElementById('iban').value;
+            const bic = document.getElementById('bic').value;
+            const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+            const reason = document.getElementById('reason').value || 'Aucun motif spécifié';
+            
+            // Formatage de la date actuelle
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const formattedDate = `${day}/${month}/${year} à ${hours}h${minutes}`;
+            
+            // Mise à jour de la page de confirmation
+            document.getElementById('confirmedAmount').textContent = `${amount.replace('.', ',')} €`;
+            document.getElementById('confirmedDebitAccount').textContent = debitAccountText;
+            document.getElementById('confirmedBeneficiary').textContent = beneficiary;
+            document.getElementById('confirmedIban').textContent = iban;
+            document.getElementById('confirmedBic').textContent = bic || 'Non spécifié';
+            document.getElementById('confirmedDate').textContent = formattedDate;
+            document.getElementById('confirmedReason').textContent = reason;
+            
+            // Affichage de la confirmation
+            transferSection.style.display = 'none';
+            confirmationSection.style.display = 'block';
+            
+            // Défilement vers le haut
+            window.scrollTo(0, 0);
+        }
+        
+        // Bouton retour
+        document.getElementById('backButton').addEventListener('click', function() {
+            transferSection.style.display = 'block';
+            confirmationSection.style.display = 'none';
+            transferForm.reset();
+            // Réinitialiser les champs conditionnels
+            document.getElementById('scheduledDateContainer').style.display = 'none';
+            document.getElementById('recurringOptions').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
